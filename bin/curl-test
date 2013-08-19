@@ -1,0 +1,14 @@
+#!/bin/sh
+
+
+curl -vvv -H 'Content-Type: application/json' -d '{"id": "123", "title": "some title", "text": "blah blah blah"}' -X POST http://localhost:3000/documents/
+
+echo
+echo GETting POSTed data:
+echo
+
+
+curl -X GET http://localhost:3000/documents/
+
+
+
