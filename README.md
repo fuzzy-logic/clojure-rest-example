@@ -21,6 +21,10 @@ RUNNING TESTS
 
 Run tests with the function "(run-tests namespaces...)":
 
+user=> (use 'clojure.test)
+nil
+user=> (run-tests)
+
 (run-tests 'your.namespace 'some.other.namespace)
 
 If you don't specify any namespaces, the current namespace is
