@@ -4,6 +4,7 @@
 
 (deftest test-datomic
   (testing "add stuff"
+    (println "running test...")
     (let [person (+ 1 1)]
       (is (= person 2))
     )

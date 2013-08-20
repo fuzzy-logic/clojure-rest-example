@@ -21,3 +21,5 @@
 (use 'clojure.test)
 (run-tests)
 (run-tests 'clojure-rest-example.test.datomic)
+(load-file "test/clojure_rest_example/test/datomic.clj")
+(doc type)
