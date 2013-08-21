@@ -6,8 +6,9 @@
   (testing "add stuff"
     (println "running test...")
     (let [conn (dbinit) ]
-      (is (= (add-data conn) true))
-      (is (= (run-query conn) true))
+      (is (not (= (add-data conn) nil)))
+      (def entity (run-query conn))
+      (is (= (keys entity)  '(:customer/recording :customer/name :customer/skyid) ))
     )
   )
 )

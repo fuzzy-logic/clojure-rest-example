@@ -5,24 +5,21 @@
 (use 'clojure.pprint)
 
 
-
-
+(def datomic-uri "datomic:free://localhost:4334//customer")
 
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
 (defn dbinit []
   (println "setting up datomic ...")
-  (def uri "datomic:free://localhost:4334//customer")
-  (d/create-database uri)
-  (def conn (d/connect uri))
-  (println "created connection: " conn)
-  (println "reading schema...")
-  (def schema-file (read-string (slurp "data/datomic_schema.dtm")))
-  (println "schema-file:" schema-file)
-  (def result @(d/transact conn schema-file))
-  (println "schema transaction result: " result)
-  conn
+  (d/create-database datomic-uri)
+
+  (let [conn (d/connect datomic-uri)
+       schema-file (read-string (slurp "data/datomic_schema.dtm"))]
+      (println "reading schema from file: " schema-file)
+      (println "commit schema transaction results: " @(d/transact conn schema-file))
+      conn
+  )
 )
 
 
@@ -37,8 +34,6 @@
 
   (println "commit transaction for data add...")
   @(d/transact conn data-tx)
-  (println "transaction committed :-)")
-  true
 )
 
 
@@ -46,21 +41,23 @@
 
 (defn run-query [conn]
   (println "creating query...")
-  (def results (q '[:find ?n :where [?n :customer/name]] (db conn)))
-  (println "query result count: " (count results))
-  (println "result type: " (type results))
-  (println "results: " results)
-  (println "first results: " (first results))
 
-  (def id (ffirst results))
-  (def entity (-> conn db (d/entity id)))
+  (let [results (q '[:find ?n :where [?n :customer/name]] (db conn))
+        id (ffirst results)
+        entity (-> conn db (d/entity id))
+        ]
 
-  ;; display the entity map's keys
-  (println "keys/entity: " (keys entity))
+    (println "query result count: " (count results))
+    (println "result type: " (type results))
+    (println "results: " results)
+    (println "first results: " (first results))
+    ;; display the entity map's keys
+    (println "keys/entity: " (keys entity))
 
 
-  ;; display the value of the entity's customer name
-  (println ":customer/name: " (:customer/name entity))
-  true
+    ;; display the value of the entity's customer name
+    (println ":customer/name: " (:customer/name entity))
+    entity
+  )
 )
 
