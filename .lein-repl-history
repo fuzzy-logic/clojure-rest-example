@@ -23,3 +23,83 @@
 (run-tests 'clojure-rest-example.test.datomic)
 (load-file "test/clojure_rest_example/test/datomic.clj")
 (doc type)
+(load-file "src/clojure_rest_example/datomic.clj")
+(dbinit)
+(uuid)
+( (:use clojure.test
+        clojure-rest-example.datomic))
+(:use clojure-rest-example.datomic)
+(load-file "src/clojure_rest_example/datomic.clj")
+(run-query)
+(use '[datomic.api :only [q db] :as d])
+(defn dbinit [](
+   (def uri "datomic:free://localhost:4334//customer")
+  (d/create-database uri)
+  (def conn (d/connect uri))
+  (def schema-file (read-string (slurp "data/datomic_schema.dtm")))
+  @(d/transact conn schema-file) 
+))
+(dbinit)
+(defn dbinit [](
+   (def uri "datomic:free://localhost:4334//customer")
+  (d/create-database uri)
+  (def conn (d/connect uri))
+  (def schema-file (read-string (slurp "data/datomic_schema.dtm")))
+  @(d/transact conn schema-file) 
+  nil
+))
+(dbinit)
+(defn dbinit [](
+   (def uri "datomic:free://localhost:4334//customer")
+  (d/create-database uri)
+  (def conn (d/connect uri))
+))
+(dbinit)
+(defn dbinit [](
+   (def uri "datomic:free://localhost:4334//customer")
+))
+(dbinit)
+(defn dbinit [](
+   (let [uri "datomic:free://localhost:4334//customer"])
+))
+(dbinit)
+dbinit
+(nil? dbinit)
+(println dbinit)
+(dbinit)
+(nil)
+(println dbinit)
+(def x dbinit)
+(println x)
+(dbinit)
+(defn dbinit [](
+   (let [uri "datomic:free://localhost:4334//customer"])
+   22
+))
+(dbinit)
+(println "blah")
+(defn dbinit [](
+   (let [uri "datomic:free://localhost:4334//customer"]
+     (nil? url)
+   )
+))
+(dbinit)
+(ns test)
+(ns testy)
+(defn- foo []
+05
+         "World!")
+(defn foo [] "World!")
+(foo)
+(defn foo [] (def v "World!"))
+(foo)
+(defn foo [] (def v "World!") v)
+(foo)
+(defn bar []
+ (str "Hello " (foo)))
+(bar)
+(defn dbinit []( (def v "datomic:free://localhost:4334//customer") c))
+(defn dbinit []( (def v "datomic:free://localhost:4334//customer") v))
+(dbinit)
+(defn dbinit [](def v "datomic:free://localhost:4334//customer") v)
+(dbinit)

@@ -5,8 +5,9 @@
 (deftest test-datomic
   (testing "add stuff"
     (println "running test...")
-    (let [person (+ 1 1)]
-      (is (= person 2))
+    (let [conn (dbinit) ]
+      (is (= (add-data conn) true))
+      (is (= (run-query conn) true))
     )
   )
 )
