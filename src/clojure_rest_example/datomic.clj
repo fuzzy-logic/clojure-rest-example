@@ -23,20 +23,18 @@
 )
 
 
-(defn add-data []
-  (println "adding data...")
+(defn add-data [data]
+  (println "adding data: " data)
   ;; add some data:
   ;; -1 used as tempid for :recording/search_term, then re-used for parent data :customer/recording
   (let [data-tx [
-    {:recording/search_term "Dexter", :db/id #db/id[:db.part/user -1]}
-    {:customer/skyid (uuid), :customer/name "Billy Bob Thornton", :db/id #db/id[:db.part/user], :customer/recording #db/id[:db.part/user -1]}
+    {:recording/search_term (:search_term (:recording data)), :db/id #db/id[:db.part/user -1]}
+    {:customer/skyid (uuid), :customer/name (:name (:customer data)), :db/id #db/id[:db.part/user], :customer/recording #db/id[:db.part/user -1]}
   ]]
 
     (println "commit transaction for data add...")
-    @(d/transact connection data-tx)
+    (not (nil? @(d/transact connection data-tx)))
   )
-
-
 
 )
 
