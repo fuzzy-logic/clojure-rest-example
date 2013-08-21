@@ -5,10 +5,10 @@
 (deftest test-datomic
   (testing "add stuff"
     (println "running test...")
-    (let [conn (dbinit) ]
-      (is (not (= (add-data conn) nil)))
-      (def entity (run-query conn))
-      (is (= (keys entity)  '(:customer/recording :customer/name :customer/skyid) ))
-    )
+    (dbinit)
+    (is (not (= (add-data) nil)))
+    (def entity (run-query))
+    (is (= (keys entity)  '(:customer/recording :customer/name :customer/skyid) ))
+    (is (= (:customer/name entity)  "Billy Bob Thornton" ))
   )
 )
