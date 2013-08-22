@@ -27,13 +27,13 @@
   (println "adding data: " data)
   ;; add some data:
   ;; -1 used as tempid for :recording/search_term, then re-used for parent data :customer/recording
-  (let [data-tx [
+  (let [datomic-data [
     {:recording/search_term (:search_term (:recording data)), :db/id #db/id[:db.part/user -1]}
     {:customer/skyid (uuid), :customer/name (:name (:customer data)), :db/id #db/id[:db.part/user], :customer/recording #db/id[:db.part/user -1]}
   ]]
 
     (println "commit transaction for data add...")
-    (not (nil? @(d/transact connection data-tx)))
+    (not (nil? @(d/transact connection datomic-data)))
   )
 
 )
@@ -58,6 +58,10 @@
 
     ;; display the value of the entity's customer name
     (println ":customer/name: " (:customer/name entity))
+
+    (println ":customer/recording: " (:customer/recording entity))
+
+    (println "entity: " entity)
     entity
   )
 )
