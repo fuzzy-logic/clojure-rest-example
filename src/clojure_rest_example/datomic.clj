@@ -7,9 +7,6 @@
 
 (def datomic-uri "datomic:free://localhost:4334//customer")
 
-
-(defn uuid [] (str (java.util.UUID/randomUUID)))
-
 (def connection (d/connect datomic-uri)  )
 
 (defn dbinit []
@@ -23,15 +20,47 @@
 )
 
 
+(defn uuid [] (str (java.util.UUID/randomUUID)))
+
+
+
+(defn- create-rec-map [customerid recordings counter newrecs]
+   (println "create-rec-map[] counter: " counter ", recordings: " recordings ", newrecs: " newrecs)
+      (if (empty? recordings)
+        newrecs
+        (let [rec (first recordings)
+            rec-data {:recording/search_term (:search_term rec),
+                      :db/id #db/id[:db.part/user counter],
+                      :recording/skyid (:skyid rec),
+                      :customer/_recording #db/id[:db.part/user customerid]}
+             ]
+            (recur customerid (rest recordings) (dec counter) (cons rec-data newrecs))
+        )
+      )
+
+)
+
+
+(defn convert-rec-map [customerid recordings]
+       (create-rec-map customerid recordings -1 [])
+  )
+
+
+
+
+
+
 (defn add-data [data]
   (println "adding data: " data)
   ;; add some data:
-  ;; -1 used as tempid for :recording/search_term, then re-used for parent data :customer/recording
+  ;; -1 used as tempid for :customer/
+  ;; -1 customer id then re-used for linking :recording/ sub-entities (a bit like a foreign key)
+  ;; :recording/ bi-directional realtionship maintained via traversal using ":customer/_recording" reference attribute and customer -1 id
   (let [skyid (uuid)
         data-tx [
     {:customer/skyid skyid, :customer/name (:name (:customer data)), :db/id #db/id[:db.part/user -1] }
     {:recording/search_term (:search_term (:recording data)), :db/id #db/id[:db.part/user -2], :recording/skyid skyid, :customer/_recording #db/id[:db.part/user -1]}
-    {:recording/search_term "other show", :db/id #db/id[:db.part/user -3], :recording/skyid skyid, :customer/_recording #db/id[:db.part/user -1]}
+
 
   ]]
 
@@ -41,6 +70,7 @@
   )
 
 )
+
 
 
 

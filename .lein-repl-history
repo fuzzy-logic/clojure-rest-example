@@ -163,3 +163,11 @@ my-func
 (defn my-now [func] (now))
 (my-now println)
 (doc second)
+(doc info)
+(doc meta)
+quit
+(doc meta)
+(doc cons)
+(doc fffirst)
+(doc ffirst)
+(doc second)
