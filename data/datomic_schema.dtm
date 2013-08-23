@@ -18,7 +18,7 @@
 
  {:db/id #db/id[:db.part/db]
   :db/ident :customer/recording
-  :db/valueType :db.type/ref  
+  :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many
   :db/doc "never miss record requests"
   :db.install/_attribute :db.part/db}
@@ -29,6 +29,13 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
   :db/doc "never miss search term"
+  :db.install/_attribute :db.part/db}
+
+   {:db/id #db/id[:db.part/db]
+  :db/ident :recording/skyid
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "back reference to customer"
   :db.install/_attribute :db.part/db}
 
  ]

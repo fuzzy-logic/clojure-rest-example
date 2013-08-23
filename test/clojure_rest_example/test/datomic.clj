@@ -6,7 +6,7 @@
   (testing "add stuff"
     (println "running test...")
     (dbinit)
-    (def customer {:customer {:name "Billy Bob Thornton"} :recording {:search_term "Dexter"}})
+    (def customer {:customer {:name "Billy Bob Thornton"} :recording {:search_term "Dexter"} })
     (is (= (add-data customer) true))
     (def entity (run-query))
     (is (= (keys entity)  '(:customer/recording :customer/name :customer/skyid) ))
