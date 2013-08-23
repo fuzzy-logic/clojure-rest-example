@@ -10,12 +10,12 @@
 (def connection (d/connect datomic-uri)  )
 
 (defn dbinit []
-  (println "setting up datomic ...")
+  (println "setting up datomic db & schema...")
   (d/create-database datomic-uri)
   (let [schema-file (read-string (slurp "data/datomic_schema.dtm"))
        transaction @(d/transact connection schema-file)]
-    (println "read schema from file: " schema-file)
-    (println "commit schema transaction results: " transaction)
+    ;(println "read schema from file: " schema-file)
+    ;(println "commit schema transaction results: " transaction)
   )
 )
 
@@ -23,53 +23,62 @@
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
 
-
-(defn- create-rec-map [customerid recordings counter newrecs]
-   (println "create-rec-map[] counter: " counter ", recordings: " recordings ", newrecs: " newrecs)
-      (if (empty? recordings)
-        newrecs
-        (let [rec (first recordings)
-            rec-data {:recording/search_term (:search_term rec),
-                      :db/id #db/id[:db.part/user counter],
-                      :recording/skyid (:skyid rec),
-                      :customer/_recording #db/id[:db.part/user customerid]}
-             ]
-            (recur customerid (rest recordings) (dec counter) (cons rec-data newrecs))
-        )
-      )
-
+(defn get-customer-id [skyid]
+   (println "getting customer id for skyid " skyid)
+  (ffirst (q '[:find  ?c :where [?c :customer/skyid skyid ] ] (db connection))  )
 )
 
 
-(defn convert-rec-map [customerid recordings]
-       (create-rec-map customerid recordings -1 [])
-  )
 
+
+(defn get-customer [skyid]
+    ;(println "customer keys/entity: " (keys customer))
+    ;(println ":customer/name: " (:customer/name customer))
+    ;(println ":customer/skyid: " (:customer/skyid customer))
+    (d/touch (-> connection db (d/entity (get-customer-id skyid))))
+ )
 
 
 
 
 
 (defn add-data [data]
-  (println "adding data: " data)
-  ;; add some data:
-  ;; -1 used as tempid for :customer/
-  ;; -1 customer id then re-used for linking :recording/ sub-entities (a bit like a foreign key)
-  ;; :recording/ bi-directional realtionship maintained via traversal using ":customer/_recording" reference attribute and customer -1 id
-  (let [skyid (uuid)
-        data-tx [
-    {:customer/skyid skyid, :customer/name (:name (:customer data)), :db/id #db/id[:db.part/user -1] }
-    {:recording/search_term (:search_term (:recording data)), :db/id #db/id[:db.part/user -2], :recording/skyid skyid, :customer/_recording #db/id[:db.part/user -1]}
-
-
-  ]]
-
-
     (println "commit transaction for data add...")
-    (not (nil? @(d/transact connection data-tx)))
-  )
+    (println "data: " data)
+    (not (nil?   @(d/transact connection data) ))
 
 )
+
+
+;(defn- create-rec-map [customerid recordings counter newrecs]
+;   (println "create-rec-map[] counter: " counter ", recordings: " recordings ", newrecs: " newrecs)
+;      (if (empty? recordings)
+;        newrecs
+;        (let [rec (first recordings)
+;            rec-data {:recording/search_term (:search_term rec),
+;                      :db/id #db/id[:db.part/user counter-val],
+;                      :recording/skyid (:skyid rec),
+;                      :customer/_recording #db/id[:db.part/user customerid]}
+;             ]
+;            (recur customerid (rest recordings) (dec counter) (cons rec-data newrecs))
+;        )
+;      )
+;)
+
+
+;(defn convert-rec-map [customerid recordings]
+;       (create-rec-map customerid recordings -1 [])
+;  )
+
+
+(defn add-recording [rec]
+     (add-data {:recording/search_term (:search_term rec),
+                :db/id #db/id[:db.part/user -1],
+                :recording/skyid (:sky-id rec),
+                :customer/_recording (get-customer (:sky-id rec))} )
+  )
+
+
 
 
 

@@ -171,3 +171,61 @@ quit
 (doc fffirst)
 (doc ffirst)
 (doc second)
+{:a (meta doc)}
+{:a (meta first)}
+(use '[datomic.api :only [q db] :as d])
+#db/id[:db.part/user (dec 20)]
+#blah[1 2 3]
+#first[1 2 3]
+#clojure/first[1 2 3]
+#db/id[1 2 3]
+#db/id[1 2 3 4 5]
+(def #myfunc (fn [] (println "hellow")))
+ #db/id[:db.part/db]
+ #db/id[:db.part/db first]
+(doc macrodef)
+(macrodef #myfunc)
+(macrodef #myfunc())
+(macrodef #myfunc[]())
+(macrodef #myfunc []())
+(defmacro #myfunc [] (println "hellow") )
+(defmacro #myfunc [] '(println "hellow") )
+(#f)
+#f
+)
+))
+((
+(doc test)
+(doc first)
+)
+(#f)
+quit
+(#f)
+(doc first)
+(defmacro myfunc [] '(println "hellow"))
+(myfunc)
+(defmacro #myfunc [] '(println "hellow"))
+(#myfunc)
+(#myfunc))
+(#myfunc()
+)
+(doc db/id)
+(doc #db/id)
+(doc #db/id[])
+(doc #db/id)
+(doc db/id)
+(use '[datomic.api :only [q db] :as d])
+(doc db/id)
+(doc d/id)
+(doc d/add)
+(doc d/transact)
+(#db/id)
+(#db/id[])
+#db/id[:db.part/user customerid])
+#db/id[:db.part/user -1])
+#db/id[:db.part/user -1]
+#db/idd[:db.part/user -1]
+#db/idk[:db.part/user -1]
+#db/i[:db.part/user -1]
+#db/id[:db.part/user -1]
+#db/id[:db.part/user #(first [-1 -2 -3])]
