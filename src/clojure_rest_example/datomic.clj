@@ -6,63 +6,98 @@
 
 
 (def datomic-uri "datomic:free://localhost:4334//customer")
+(def connection (d/connect datomic-uri)  )
+
+
+
+(defn dbinit []
+  (println "setting up datomic db & schema...")
+  (d/create-database datomic-uri)
+  (let [schema-file (read-string (slurp "data/datomic_schema.dtm"))
+       transaction @(d/transact connection schema-file)]
+    ;(println "read schema from file: " schema-file)
+    ;(println "commit schema transaction results: " transaction)
+  )
+)
+
 
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
-(def connection (d/connect datomic-uri)  )
 
-(defn dbinit []
-  (println "setting up datomic ...")
-  (d/create-database datomic-uri)
-  (let [schema-file (read-string (slurp "data/datomic_schema.dtm"))
-       transaction @(d/transact connection schema-file)]
-    (println "read schema from file: " schema-file)
-    (println "commit schema transaction results: " transaction)
-  )
+
+(defn find-by
+  "Returns the unique entity identified by attr and val."
+  [attr val]
+  (q '[:find ?e
+        :in $ ?attr ?val
+        :where [?e ?attr ?val]]
+      (d/db connection) attr val))
+
+
+
+(defn get-customer-id [skyid]
+   (println "getting customer id for skyid " skyid)
+  (let [id (ffirst (find-by :customer/skyid skyid ))]
+    (do (println "get-customer-id returning: " id)
+      id)
+    )
 )
+
+
+
+
+(defn get-customer [skyid]
+    (println "get-customer[] id=" skyid)
+    ;(println ":customer/name: " (:customer/name customer))
+    ;(println ":customer/skyid: " (:customer/skyid customer))
+    (let [customer (d/touch (-> connection db (d/entity (get-customer-id skyid))))]
+      (do (println "get-customer returning: " customer))
+      customer
+    )
+
+ )
+
 
 
 (defn add-data [data]
-  (println "adding data: " data)
-  ;; add some data:
-  ;; -1 used as tempid for :recording/search_term, then re-used for parent data :customer/recording
-  (let [datomic-data [
-    {:recording/search_term (:search_term (:recording data)), :db/id #db/id[:db.part/user -1]}
-    {:customer/skyid (uuid), :customer/name (:name (:customer data)), :db/id #db/id[:db.part/user], :customer/recording #db/id[:db.part/user -1]}
-  ]]
-
-    (println "commit transaction for data add...")
-    (not (nil? @(d/transact connection datomic-data)))
-  )
+    (println "add-data[] data: " data)
+    ;(not (nil?   @(d/transact connection data) ))
+    (let [result (d/transact connection data)]
+      (do (println "add-data result: " result))
+      result
+      )
 
 )
 
 
+(defn add-recording [rec]
+     (add-data [{:recording/search_term (:search_term rec),
+                :db/id #db/id[:db.part/user -1],
+                :recording/skyid (:skyid rec),
+                :customer/_recording (get-customer-id (:skyid rec))}] )
+  )
 
 
-(defn run-query []
+
+
+
+
+
+(defn get-customer-recordings
+  "returns recordings for a given customer's skyid"
+  [skyid]
   (println "creating query...")
 
-  (let [results (q '[:find ?n :where [?n :customer/name]] (db connection))
-        id (ffirst results)
-        entity (-> connection db (d/entity id))
+  (let [results (q '[:find  ?rst
+                     :in $ ?skyid
+                     :where [?r :recording/skyid ?skyid ]
+                            [?r :recording/search_term ?rst ]
+                    ]
+                    (db connection) skyid)
         ]
-
-    (println "query result count: " (count results))
-    (println "result type: " (type results))
-    (println "results: " results)
-    (println "first results: " (first results))
-    ;; display the entity map's keys
-    (println "keys/entity: " (keys entity))
-
-    ;; display the value of the entity's customer name
-    (println ":customer/name: " (:customer/name entity))
-
-    (println ":customer/recording: " (:customer/recording entity))
-
-    (println "entity: " entity)
-    entity
+    (println "get-customer-recordings[] results: " results)
+     results
   )
 )
 

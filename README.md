@@ -33,6 +33,11 @@ This works for me from the command line:
 lein test clojure-rest-example.test.testname
 
 
+Example:
+# lein test clojure-rest-example.test.datomic
+
+
+
 
 TEST REST API VIA CURL
 
