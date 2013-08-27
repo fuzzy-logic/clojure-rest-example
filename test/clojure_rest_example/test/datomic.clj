@@ -2,13 +2,13 @@
   (:use clojure.test
         clojure-rest-example.datomic))
 
-(def cust1-skyid 123)
-(def cust2-skyid 456)
-(def cust3-skyid 789)
+(def cust1-skyid (uuid))
+(def cust2-skyid (uuid))
+(def cust3-skyid (uuid))
 
 
 
-(defn test-customer-data[]
+(def test-customer-data
     ;; add some data:
   ;; -1 used as tempid for :customer/
   ;; -1 customer id then re-used for linking :recording/ sub-entities (a bit like a foreign key)
@@ -32,27 +32,27 @@
 (dbinit)
 (add-data test-customer-data)
 
-(deftest test-add-recording
-  (testing "add new recording"
-    (println "running test...")
 
 
-    (def cust1-newrec {:skyid cust1-skyid :search_term "Eastenders"})
-    (is (= (add-data customer) true))
+(deftest test-get-customer-id
+  (testing "testing get-customer-id"
+    (println "running test-get-customer-id...")
+    (def custid (get-customer-id cust1-skyid) )
+    (is (number? custid))
   )
 )
 
 
-;(deftest test-convert-rec-map
-;  (testing "convert-rec-map")
-;  (def recordinglist [{:search_term "Dexter"} {:search_term "Game of Thrones"} {:search_term "Breaking Bad"}])
-;  (def result (convert-rec-map 123 recordinglist))
-;  (println "result metedata: " (meta result))
-;  (is (seq? result))
-;  (is (map? (first result)))
-;  (is (= (:recording/search_term (first result)) "Breaking Bad"))
-;  (is (= (:recording/search_term (nth result 1)) "Game of Thrones"))
-;   (is (= (:recording/search_term (nth result 2)) "Dexter"))
-;)
+(deftest test-add-recording
+  (testing "add new recording"
+    (println "running test...")
+    (def cust1-newrec {:skyid cust1-skyid :search_term "Eastenders"})
+    (is (not (nil? (add-recording cust1-newrec))))
+    (is (= (ffirst (get-customer-recordings cust1-skyid)) "Eastenders" ))
+  )
+)
+
+
+
 
 
