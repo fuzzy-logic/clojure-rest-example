@@ -25,11 +25,13 @@
          ))
 
     (defn create-new-document [doc]
-      (let [id (uuid)]
-        (sql/with-connection (db-connection)
-          (let [document (assoc doc "id" id)]
-            (sql/insert-record :documents document)))
-        (get-document id)))
+      (let [id (uuid)
+            rec (d/add-recording doc)]
+        (do (println "create-new-document[] rec: " rec)
+          rec
+          )
+      )
+    )
 
     (defn update-document [id doc]
         (sql/with-connection (db-connection)

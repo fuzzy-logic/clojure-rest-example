@@ -250,3 +250,20 @@ quit
 (lazy-contains? [1 2 3] nil)
 (lazy-contains? [1 2 nil] nil)
 (doc contains?)
+(def uri "datomic:mem://testdb")
+(d/create-database uri)
+ (d/connect uri)
+(ns user   (:use [datomic.api :as d]))
+(:use [datomic.api :as d])
+(d/create-database "datomic:mem://hello")
+ (d/connect "datomic:mem://hello")
+(def conn (d/connect "datomic:mem://hello")  )
+@(d/transact connection "{:db/id #db/id[:db.part/db]")
+  :db/ident :customer/skyid
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/fulltext true
+  :db/doc "customer's skyid"
+@(d/transact connection "{:db/id #db/id[:db.part/db]}")
+@(d/transact conn "{:db/id #db/id[:db.part/db]}")
+@(d/transact conn [{:db/id #db/id[:db.part/db]}])

@@ -1,24 +1,25 @@
 (ns clojure-rest-example.datomic
-  (:use [clojure.test]))
-
-(use '[datomic.api :only [q db] :as d])
-(use 'clojure.pprint)
+  (:use [datomic.api :only [q db] :as d] ))
 
 
-(def datomic-uri "datomic:free://localhost:4334//customer")
+
+
+;(def datomic-uri "datomic:free://localhost:4334/customer") ; persistent filesystem db
+(def datomic-uri "datomic:mem:/customer")
+(d/create-database datomic-uri)
 (def connection (d/connect datomic-uri)  )
-
 
 
 (defn dbinit []
   (println "setting up datomic db & schema...")
-  (d/create-database datomic-uri)
+
   (let [schema-file (read-string (slurp "data/datomic_schema.dtm"))
        transaction @(d/transact connection schema-file)]
     ;(println "read schema from file: " schema-file)
     ;(println "commit schema transaction results: " transaction)
   )
 )
+
 
 
 

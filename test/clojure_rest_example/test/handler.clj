@@ -22,8 +22,17 @@
  ;   )
  ; )
 
-   (testing "get one customer"
-    (let [response (app (request :get "/documents/4140a31a-d638-44aa-89b2-503500b9dbf9"))]
+ ;  (testing "get one customer"
+ ;   (let [response (app (request :get "/documents/4140a31a-d638-44aa-89b2-503500b9dbf9"))]
+ ;     (println "response: " response)
+ ;     (is (= (:status response) 200))
+ ;     (is (not (nil? (:body response) )))
+ ;   )
+ ; )
+
+
+    (testing "create new recording"
+    (let [response (app (request :post "/customer/4140a31a-d638-44aa-89b2-503500b9dbf9/recording" :body "{\"search_term\": \"Malcolm in the Middle\", \"skyid\": \"4140a31a-d638-44aa-89b2-503500b9dbf9\"}"))]
       (println "response: " response)
       (is (= (:status response) 200))
       (is (not (nil? (:body response) )))
