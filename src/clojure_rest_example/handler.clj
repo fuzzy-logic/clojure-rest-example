@@ -16,12 +16,13 @@
     )
 
     (defn get-document [id]
-      (sql/with-connection (db-connection)
-        (sql/with-query-results results
-          ["select * from documents where id = ?" id]
-          (cond
-            (empty? results) {:status 404}
-            :else (response (first results))))))
+      (let
+          [results (d/get-customer id)]
+          (if  (empty? results)
+            {:status 404}
+            (response (first results) )
+           )
+         ))
 
     (defn create-new-document [doc]
       (let [id (uuid)]
