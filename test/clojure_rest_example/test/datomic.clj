@@ -32,6 +32,9 @@
 (dbinit)
 (add-data test-customer-data)
 
+(defn lazy-contains? [collection key]
+  (some #{key} collection)
+)
 
 
 (deftest test-get-customer-id
@@ -43,12 +46,26 @@
 )
 
 
+
+
 (deftest test-add-recording
   (testing "add new recording"
     (println "running test...")
     (def cust1-newrec {:skyid cust1-skyid :search_term "Eastenders"})
     (is (not (nil? (add-recording cust1-newrec))))
-    (is (= (ffirst (get-customer-recordings cust1-skyid)) "Eastenders" ))
+    (is (lazy-contains? (map :recording/search_term (get-customer-recordings cust1-skyid)) "Eastenders" ))
+  )
+)
+
+
+(deftest test-get-all-customers
+  (testing "testing test-get-all-customers"
+    (println "running test-get-all-customers...")
+    (def allcustomers (get-all-customers) )
+     (println "customers: " allcustomers)
+    (is (not (nil? allcustomers)))
+    (is (seq allcustomers))
+    (is (lazy-contains? (map :customer/name allcustomers) "Jane Ayre"))
   )
 )
 

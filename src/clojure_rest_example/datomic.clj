@@ -46,6 +46,33 @@
 
 
 
+(defn get-entities [idlist]
+  (println "get-customers [] idlist: " idlist)
+    (if (empty? idlist)
+      nil
+      (let [recording (d/touch (-> connection db (d/entity (first idlist))))
+          results  (cons recording (get-entities (rest idlist)))
+          ]
+        (do (println "get-recordings retuning results: " results)
+          results
+        )
+      )
+    )
+
+)
+
+(defn get-all-customers
+  "retrieve all customers from datomic"
+  []
+  (let [idlist (q '[:find ?c :where [?c :customer/skyid ?skyid] ] (d/db connection))
+    results (get-entities (map first idlist))]
+
+    (do (println "get-all-customers [] result count: " (count results))
+      results
+      )
+    )
+
+)
 
 (defn get-customer [skyid]
     (println "get-customer[] id=" skyid)
@@ -57,6 +84,7 @@
     )
 
  )
+
 
 
 
@@ -81,7 +109,17 @@
 
 
 
-
+(defn get-entities "return entities for given ids" [idlist]
+  ;(println "get-entities [] idlist: " idlist)
+    (if (empty? idlist)
+      nil
+      (let [id (first idlist)
+            entity (d/touch (-> connection db (d/entity id)))
+          results  (cons entity (get-entities (rest idlist)))  ]
+       results
+      )
+    )
+)
 
 
 (defn get-customer-recordings
@@ -89,15 +127,15 @@
   [skyid]
   (println "creating query...")
 
-  (let [results (q '[:find  ?rst
+  (let [recidlist (q '[:find  ?r
                      :in $ ?skyid
                      :where [?r :recording/skyid ?skyid ]
                             [?r :recording/search_term ?rst ]
                     ]
                     (db connection) skyid)
         ]
-    (println "get-customer-recordings[] results: " results)
-     results
+    (println "get-customer-recordings[] recidlist: " recidlist)
+     (get-entities (map first recidlist))
   )
 )
 

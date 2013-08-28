@@ -23,17 +23,6 @@
 (run-tests 'clojure-rest-example.test.datomic)
 (load-file "test/clojure_rest_example/test/datomic.clj")
 (doc type)
-<<<<<<< HEAD
-(def v [:hi "world"})
-(def v {:hi "world"})
-(println v)
-println v
-(def customer {:customer {:name "Billy Bob Thornton"} :recording {:search_term "Dexter"}})
-(:customer (:name customer))
-(:customer customer)
-(:name (:customer customer))
-(doc ffirst)
-=======
 (load-file "src/clojure_rest_example/datomic.clj")
 (dbinit)
 (uuid)
@@ -240,4 +229,24 @@ quit
 #db/i[:db.part/user -1]
 #db/id[:db.part/user -1]
 #db/id[:db.part/user #(first [-1 -2 -3])]
->>>>>>> 8d9335213c46d3baef03485dca47cced97488401
+(map first #{[1] [2] [3]})
+(map ffirst #{[1] [2] [3]})
+(map thrid #{[1] [2] [3]})
+(map third #{[1] [2] [3]})
+(map second #{[1] [2] [3]})
+(map :recording/search_term ({:recording/search_term Eastenders, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046237} {:recording/search_term Game of Thrones, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046229} {:recording/search_term Breaking Bad, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046228}))
+(map :recording/search_term '({:recording/search_term Eastenders, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046237} {:recording/search_term Game of Thrones, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046229} {:recording/search_term Breaking Bad, :recording/skyid e7cf8f94-260c-4ac6-825b-d7f2f628415b, :db/id 17592186046228}))
+(map :a '({:a 11 :b 12} {:a 21 :b 22} {:a 31 :b 32}))
+(doc some)
+(some "a" ["a" "b" "c"])
+(some #{"a"} ["a" "b" "c"])
+(some #{"a"} ["d" "b" "c"])
+(doc some)
+(some #{nil} ["a" "b" "c"])
+(some #{nil} ["a" "b" "c" nil])
+(defn lazy-contains? [collection key]
+  (some #{key} collection)
+)
+(lazy-contains? [1 2 3] nil)
+(lazy-contains? [1 2 nil] nil)
+(doc contains?)

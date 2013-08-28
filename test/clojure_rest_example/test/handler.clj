@@ -4,11 +4,21 @@
         clojure-rest-example.handler))
 
 (deftest test-app
-  (testing "main route"
-    (let [response (app (request :get "/"))]
-      (is (= (:status response) 200))
-      (is (= (:body response) "Hello World"))))
 
-  (testing "not-found route"
-    (let [response (app (request :get "/invalid"))]
-      (is (= (:status response) 404)))))
+  ;(testing "main route"
+  ;  (let [response (app (request :get "/"))]
+  ;    (is (= (:status response) 200))
+  ;    (is (= (:body response) "Hello World"))))
+
+  ;(testing "not-found route"
+   ; (let [response (app (request :get "/invalid"))]
+    ;  (is (= (:status response) 404)))))
+
+ (testing "all customers"
+    (let [response (app (request :get "/documents"))]
+      (println "response: " response)
+      (is (= (:status response) 200))
+      (is (not (nil? (:body response) )))
+    )
+  )
+)

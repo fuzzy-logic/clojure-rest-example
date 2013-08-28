@@ -7,13 +7,15 @@
       (:require [compojure.handler :as handler]
                 [ring.middleware.json :as middleware]
                 [clojure.java.jdbc :as sql]
-                [compojure.route :as route]
-                [clojure-rest-example.datomic :as d]))
+                [compojure.route :as route]))
 
 
     (defn get-all-documents []
-      (response (d/get-all-customers) )
-    )
+      (response
+        (sql/with-connection (db-connection)
+          (sql/with-query-results results
+            ["select * from documents"]
+            (into [] results)))))
 
     (defn get-document [id]
       (sql/with-connection (db-connection)
