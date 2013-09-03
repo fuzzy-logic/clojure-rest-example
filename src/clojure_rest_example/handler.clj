@@ -25,6 +25,7 @@
          ))
 
     (defn create-new-document [doc]
+      (println "create-new-document[] doc: " doc)
       (let [id (uuid)
             rec (d/add-recording doc)]
         (do (println "create-new-document[] rec: " rec)
@@ -34,10 +35,12 @@
     )
 
     (defn update-document [id doc]
-        (sql/with-connection (db-connection)
-          (let [document (assoc doc "id" id)]
-            (sql/update-values :documents ["id=?" id] document)))
-        (get-document id))
+        ; no matching service level implementation
+        ;(sql/with-connection (db-connection)
+        ;  (let [document (assoc doc "id" id)]
+        ;    (sql/update-values :documents ["id=?" id] document)))
+        ;(get-document id)
+      )
 
     (defn delete-document [id]
       (sql/with-connection (db-connection)

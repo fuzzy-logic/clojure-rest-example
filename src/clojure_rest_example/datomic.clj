@@ -47,20 +47,37 @@
 
 
 
-(defn get-entities [idlist]
-  (println "get-customers [] idlist: " idlist)
+(defn get-entities "return entities for given ids" [idlist]
+  (println "get-entities [] idlist: " idlist)
+    (if (empty? idlist)
+      nil
+      (let [id (first idlist)
+            entity (d/touch (-> connection db (d/entity id)))
+          results  (cons entity (get-entities (rest idlist)))  ]
+        (do (println "get-entities[] results: " results)
+           results
+         )
+      )
+    )
+)
+
+
+(defn get-recordings [idlist]
+  (println "get-recordings [] idlist: " idlist)
     (if (empty? idlist)
       nil
       (let [recording (d/touch (-> connection db (d/entity (first idlist))))
           results  (cons recording (get-entities (rest idlist)))
           ]
-        (do (println "get-recordings retuning results: " results)
+        (do (println "get-recordings returning results: " results)
           results
         )
       )
     )
-
 )
+
+
+
 
 (defn get-all-customers
   "retrieve all customers from datomic"
@@ -92,12 +109,20 @@
 (defn add-data [data]
     (println "add-data[] data: " data)
     ;(not (nil?   @(d/transact connection data) ))
-    (let [result (d/transact connection data)]
+    (let [result @(d/transact connection data)]
       (do (println "add-data result: " result))
       result
       )
 
 )
+
+(defn delete-recording [id]
+  (println "delete-recording[] id: " id)
+    (let [result (d/transact connection [[:db.fn/retractEntity id]])]
+      (do (println "delete-recording [id] result: " result )
+      result)
+    )
+  )
 
 
 (defn add-recording [rec]
@@ -110,17 +135,6 @@
 
 
 
-(defn get-entities "return entities for given ids" [idlist]
-  ;(println "get-entities [] idlist: " idlist)
-    (if (empty? idlist)
-      nil
-      (let [id (first idlist)
-            entity (d/touch (-> connection db (d/entity id)))
-          results  (cons entity (get-entities (rest idlist)))  ]
-       results
-      )
-    )
-)
 
 
 (defn get-customer-recordings
