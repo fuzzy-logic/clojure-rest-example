@@ -40,69 +40,54 @@
 (deftest test-get-customer-id
   (testing "testing get-customer-id"
     (println "running test-get-customer-id...")
-    (def custid (get-customer-id cust1-skyid) )
-    (is (number? custid))
+    (let [custid (get-customer-id cust1-skyid)]
+      (is (number? custid))
+    )
   )
 )
 
 
 
-
-
-
-
-  (deftest test-get-all-customers
+(deftest test-get-all-customers
   (testing "testing test-get-all-customers"
-    (println "running test-get-all-customers...")
-    (def allcustomers (get-all-customers) )
-     (println "customers: " allcustomers)
-    (is (not (nil? allcustomers)))
-    (is (seq allcustomers))
-    (is (lazy-contains? (map :customer/name allcustomers) "Jane Ayre"))
+    (let [allcustomers (get-all-customers)]
+      (println "customers: " allcustomers)
+      (is (not (nil? allcustomers)))
+      (is (seq allcustomers))
+      (is (lazy-contains? (map :customer/name allcustomers) "Jane Ayre"))
+    )
   )
 )
-
-
-
-
 
 
 
 (deftest test-add-recording
-  (testing "add new recording"
-    (println "running test...")
-    (def cust1-newrec {:skyid cust1-skyid :search_term "Eastenders"})
-     (def newrec-response (add-recording cust1-newrec) )
-     (println "test: cust1-newrec: " cust1-newrec)
-     (println "test: newrec-response: " newrec-response)
-    (is (not (nil? newrec-response)))
-    (is (not (nil? (:tx-data newrec-response))))
-    (is (lazy-contains? (map :recording/search_term (get-customer-recordings cust1-skyid)) "Eastenders" ))
+  (testing "add new recording entity"
+    (let [cust1-newrec {:skyid cust1-skyid :search_term "Eastenders"}
+          newrec-response (add-recording cust1-newrec)]
+      (println "test: cust1-newrec: " cust1-newrec)
+      (println "test: newrec-response: " newrec-response)
+      (is (not (nil? newrec-response)))
+      (is (not (nil? (:tx-data newrec-response))))
+      (is (lazy-contains? (map :recording/search_term (get-customer-recordings cust1-skyid)) "Eastenders" ))
+    )
   )
 )
 
 
-  (deftest test-delete-customer-id
-  (testing "delete customer"
-    (println "running delete customer test...")
-    (def cust1-newrec (add-recording {:skyid cust1-skyid :search_term "Eastenders"}))
-    (def rec-id (first (vals (:tempids cust1-newrec))))
-    (println "test: added customer cust1-newrec: " cust1-newrec)
-    (println "test: rec-id: " rec-id)
-    (def rec (first (get-entities [rec-id])))
-    (println "test: rec map: " rec)
-     (println "test: rec map keys: " (keys rec))
-    (println "test: rec map vals: " (vals rec))
-     (println "test: rec map key: :recording/search_term =" (:recording/search_term rec))
-     (println "test: rec map key: :recording/skyid =" (:recording/skyid rec))
-     (println "test: rec map key: :db/id =" (:db/id rec))
-    (println "test: rec map count: " (count rec))
-     (println "test: rec map keys count: " (count (keys rec)))
-    (println "test: rec map vals count: " (count (vals rec)))
-    (is (> (count rec) 1))
-    (is (delete-recording rec-id))
-    (is (= (count (get-entities [rec-id])) 1))
-   )
+(deftest test-delete-recoding
+  (testing "delete recoding by id"
+    (let [newrec (add-recording {:skyid cust1-skyid :search_term "Eastenders"})
+          rec-id (first (vals (:tempids newrec)))
+          rec (first (get-entities [rec-id]))]
+      (println "test: added recording newrec: " newrec)
+      (println "test: rec-id: " rec-id)
+      (println "test: rec map: " rec)
+      (is (> (count rec) 1))
+      (is (delete-recording rec-id))
+      (is (= (count (get-entities [rec-id])) 1))
+      )
+    )
 )
 
 
